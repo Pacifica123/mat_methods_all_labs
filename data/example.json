@@ -1,12 +1,12 @@
 
 {
     "criteria": [
-        {"id":"c1","weight":1.0,"maximize":true},
-        {"id":"c2","weight":2.0,"maximize":true}
+        {"id":"Прочность","weight":1.0,"maximize":true},
+        {"id":"Скорость","weight":2.0,"maximize":true}
     ],
     "alternatives": [
-        {"id":"a1","values":[5.0, 3.0]},
-        {"id":"a2","values":[4.0, 4.0]},
-        {"id":"a3","values":[6.0, 2.0]}
+        {"id":"Бумажная кирка","values":[1.0, 3.0]},
+        {"id":"Железная кирка","values":[4.0, 4.0]},
+        {"id":"Алмазная кирка","values":[6.0, 2.0]}
     ]
 }
