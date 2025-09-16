@@ -1,12 +1,16 @@
-
 {
-    "criteria": [
-        {"id":"Прочность","weight":1.0,"maximize":true},
-        {"id":"Скорость","weight":2.0,"maximize":true}
-    ],
-    "alternatives": [
-        {"id":"Бумажная кирка","values":[1.0, 3.0]},
-        {"id":"Железная кирка","values":[4.0, 4.0]},
-        {"id":"Алмазная кирка","values":[6.0, 2.0]}
-    ]
+  "criteria": [
+    { "id": "price", "weight": 0.3, "maximize": false },
+    { "id": "cable", "weight": 0.1, "maximize": true },
+    { "id": "sensitivity", "weight": 0.3, "maximize": true },
+    { "id": "weight", "weight": 0.1, "maximize": false },
+    { "id": "freq", "weight": 0.2, "maximize": true }
+  ],
+  "alternatives": [
+    { "id": "SONY MDR-XB950AP BLACK", "values": [5990, 1.2, 106, 245, 28000] },
+    { "id": "SHURE SRH 440", "values": [7700, 3, 105, 181, 22000] },
+    { "id": "FOCAL LISTEN", "values": [9990, 1.4, 122, 273, 22000] },
+    { "id": "AUDIO-TECHNICA ATH-M40X", "values": [7990, 3, 96, 240, 24000] },
+    { "id": "AKG K240 MKII", "values": [8600, 3, 104, 240, 25000] }
+  ]
 }

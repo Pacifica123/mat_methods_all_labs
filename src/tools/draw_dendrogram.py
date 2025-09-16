@@ -17,7 +17,7 @@ def main(path_txt: str):
     ax.set_ylabel("Distance")
 
     plt.tight_layout()
-    plt.savefig("../../data/dendrogram.png")
+    plt.savefig("./data/dendrogram.png")
     print("Saved dendrogram.png")
 
 if __name__ == "__main__":
