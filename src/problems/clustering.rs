@@ -20,7 +20,7 @@ struct ClusteringInput {
 pub struct ClusteringSolver;
 
 impl ClusteringSolver {
-    /// python_path: Some("/path/to/venv/bin/python") or None -> "python3"
+    /// python_path: Some("/path/to/venv/bin/python") или None -> "python3"
     pub fn solve(python_path: Option<&str>) -> Result<DecisionResult> {
         // read input file
         let mut in_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -32,15 +32,15 @@ impl ClusteringSolver {
         if n == 0 {
             anyhow::bail!("No objects provided for clustering");
         }
-        // check features length consistency
+        // проверка согласованности
         let feat_len = input.objects[0].features.len();
         for (i, obj) in input.objects.iter().enumerate() {
             if obj.features.len() != feat_len {
-                anyhow::bail!("Inconsistent feature vector length at object index {}", i);
+                anyhow::bail!("Несоответствие числа признаков у объекта с индексом {}", i);
             }
         }
 
-        // compute pairwise euclidean distances
+        // попарные евклидовы расстояния
         let mut dist = vec![vec![0.0_f64; n]; n];
         for i in 0..n {
             for j in (i + 1)..n {
@@ -54,12 +54,11 @@ impl ClusteringSolver {
             }
         }
 
-        // clusters: each cluster has members (Vec<usize>) and an id (usize)
         let mut clusters_members: Vec<Vec<usize>> = (0..n).map(|i| vec![i]).collect();
         let mut clusters_id: Vec<usize> = (0..n).collect(); // initial ids 0..n-1
         let mut next_cluster_id: usize = n;
 
-        // linkage matrix entries: (idx1, idx2, dist, size)
+        // элементы матрицы связей: (idx1, idx2, dist, size) - индексы, расстояние и размер кластеров
         let mut linkage: Vec<(usize, usize, f64, usize)> = Vec::new();
 
         while clusters_members.len() > 1 {
@@ -70,7 +69,7 @@ impl ClusteringSolver {
 
             for i in 0..clusters_members.len() {
                 for j in (i + 1)..clusters_members.len() {
-                    // single-link: min distance between any member pair
+                    // минимальное расстояние между любыми элементами двух кластеров
                     let mut dmin = f64::MAX;
                     for &a in &clusters_members[i] {
                         for &b in &clusters_members[j] {
@@ -87,20 +86,21 @@ impl ClusteringSolver {
                 }
             }
 
-            // ids for linkage row must be current cluster ids
+            // id для строки матрицы связей должны соответствовать текущим id кластеров
             let id_i = clusters_id[best_i];
             let id_j = clusters_id[best_j];
 
-            // new cluster members and id
+            // новые элементы кластера и его id
             let mut new_members = clusters_members[best_i].clone();
             new_members.extend(clusters_members[best_j].iter().cloned());
             let new_id = next_cluster_id;
             let new_size = new_members.len();
 
-            // append linkage row (ids must be as floats in scipy but we store ints)
+            // добавляем строку в матрицу связей
             linkage.push((id_i, id_j, best_d, new_size));
 
-            // remove clusters with larger index first to avoid shifting
+            // удаляем кластеры с большим индексом сначала
+            // (чтобы избежать сдвига индексов)
             if best_i < best_j {
                 clusters_members.remove(best_j);
                 clusters_members.remove(best_i);
@@ -113,14 +113,14 @@ impl ClusteringSolver {
                 clusters_id.remove(best_j);
             }
 
-            // push new cluster
+            // добавляем новый кластер
             clusters_members.push(new_members);
             clusters_id.push(new_id);
 
             next_cluster_id += 1;
         }
 
-        // write linkage matrix in scipy format: idx1 idx2 dist size
+        // записываем матрицу в формате: idx1 idx2 dist size - в txt файл
         let mut out_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         out_path.push("data/answer_for_clustering.txt");
         let mut out = String::new();
@@ -129,7 +129,7 @@ impl ClusteringSolver {
         }
         fs::write(&out_path, out)?;
 
-        // call python drawing script
+        // python-срипт отрисовки дендрограммы
         let mut python_bin = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let mut script_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
 
@@ -145,7 +145,7 @@ impl ClusteringSolver {
             anyhow::bail!("Python dendrogram script failed with non-zero exit");
         }
 
-        // prepare DecisionResult: map object id -> index for convenience (scores)
+        // подготовка результата в DecisionResult для printer
         let scores: Vec<(String, f64)> = input
             .objects
             .iter()

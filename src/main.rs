@@ -5,14 +5,14 @@ mod core;
 mod problems;
 mod tools;
 
-use core::base::ProblemSpec;
 use core::printer::print_result;
 use problems::{
     deterministic::DeterministicSolver, 
     multicriteria::WeightedSumSolver, 
     risk::RiskSolver, 
-    // nutrition::NutritionSolver,
-    clustering::ClusteringSolver
+    clustering::ClusteringSolver,
+    decision_rules::DecisionRulesSolver,
+    bayes_rules::ProbabilisticRulesSolver,
 };
 
 #[derive(Parser)]
@@ -20,49 +20,92 @@ use problems::{
 struct Cli {
     /// Путь к JSON-файлу с описанием задачи
     input: Option<String>,
-    /// Метод: deterministic | multicriteria | risk
-    #[arg(short, long, default_value = "deterministic")]
-    method: String,
+    /// Метод: deterministic | multicriteria | risk | clustering
+    #[arg(short, long)]
+    method: Option<String>,
 }
-
-
-
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
 
-    match cli.method.as_str() {
-        "deterministic" | "multicriteria" | "risk" | "nutrition" => {
+    if cli.method.is_none() {
+        
+        // 1. Многокритериальный анализ
+        // {
+        //     let spec = core::parser::read_spec("data/example.json")?;
+        //     let result = WeightedSumSolver::solve(&spec)?;
+        //     print_result(&result);
+        // }
+
+        // // 2. Кластеризация
+        // {
+        //     // путь к Python можно захардкодить при необходимости
+        //     ClusteringSolver::solve(None)?;
+        //     println!("Кластеризация завершена: смотри data/answer_for_clustering.txt и dendrogram.png");
+        // }
+
+        // // 3. Принятие с учетом риска по критериям 
+        // let spec = core::parser::read_spec("data/decision_matrix.json")?;
+        // let result = DecisionRulesSolver::solve(&spec, "wald", None)?;
+        // print_result(&result);
+
+        // let result = DecisionRulesSolver::solve(&spec, "maximax", None)?;
+        // print_result(&result);
+
+        // let result = DecisionRulesSolver::solve(&spec, "hurwicz", Some(0.25))?;
+        // print_result(&result);
+
+        // let result = DecisionRulesSolver::solve(&spec, "savidge", None)?;
+        // print_result(&result);
+
+        // let result = DecisionRulesSolver::solve(&spec, "laplace", None)?;
+        // print_result(&result);
+
+
+        // // 4. Байес, Ферстнер, Ходж
+        // let spec = core::parser::read_spec("data/probabilistic_matrix.json")?;
+
+        // let bayes = ProbabilisticRulesSolver::solve(&spec, "bayes", None)?;
+        // print_result(&bayes);
+
+        // let ferstner = ProbabilisticRulesSolver::solve(&spec, "ferstner", Some(-0.5))?;
+        // print_result(&ferstner);
+
+        // let hodge = ProbabilisticRulesSolver::solve(&spec, "hodge-lehman", Some(0.7))?;
+        // print_result(&hodge);
+
+        let spec = core::parser::read_spec("data/hermeyer_matrix.json")?;
+        let hermeyer = ProbabilisticRulesSolver::solve(&spec, "hermeyer", None)?;
+        print_result(&hermeyer);
+
+
+        // можно добавлять другие блоки по мере надобности
+        return Ok(());
+    }
+
+    // ---- Старый режим через CLI ----
+    match cli.method.as_deref() {
+        Some("deterministic") | Some("multicriteria") | Some("risk") => {
             let input_path = cli.input.ok_or_else(|| anyhow::anyhow!("Input path required"))?;
             let spec = core::parser::read_spec(&input_path)?;
-            let result = match cli.method.as_str() {
-                "deterministic" => DeterministicSolver::solve(&spec),
-                "multicriteria" => WeightedSumSolver::solve(&spec),
-                "risk" => RiskSolver::solve(&spec),
+            let result = match cli.method.as_deref() {
+                Some("deterministic") => DeterministicSolver::solve(&spec),
+                Some("multicriteria") => WeightedSumSolver::solve(&spec),
+                Some("risk") => RiskSolver::solve(&spec),
                 _ => unreachable!(),
             }?;
             print_result(&result);
         }
-        "riskbuild" => {
-            // запускаем билдер
+        Some("riskbuild") => {
             tools::risk_builder::run()?;
         }
-        // "nutrition" => {
-        //     // NutritionSolver теперь возвращает DecisionResult
-        //     let result = NutritionSolver::solve()?;
-        //     print_result(&result);
-        // }
-        "clustering" => {
-            // путь к Python-интерпретатору в venv
-            // let python_path = Some(
-            //     PathBuf::from(env!("CARGO_MANIFEST_DIR")).push
-            //     "./tools/lvenv/bin/python"
-            // );
-            // ClusteringSolver::solve(python_path)?;
+        Some("clustering") => {
             ClusteringSolver::solve(None)?;
-            println!("Кластеризация завершена: смотри data/answer_for_clustering.txt и dendrogram.png");
+            println!("Кластеризация завершена: см.: data/answer_for_clustering.txt и dendrogram.png");
         }
-        other => anyhow::bail!("Неизвестный метод: {}", other),
+        Some(other) => anyhow::bail!("Неизвестный метод: {}", other),
+        None => unreachable!(),
     }
+
     Ok(())
 }
