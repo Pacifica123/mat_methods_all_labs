@@ -15,6 +15,8 @@ use problems::{
     bayes_rules::ProbabilisticRulesSolver,
 };
 
+use crate::problems::ahp::AhpSolver;
+
 #[derive(Parser)]
 #[command(author, version, about = "Decision support template", long_about = None)]
 struct Cli {
@@ -31,11 +33,16 @@ fn main() -> Result<()> {
     if cli.method.is_none() {
         
         // 1. Многокритериальный анализ
-        // {
-        //     let spec = core::parser::read_spec("data/example.json")?;
-        //     let result = WeightedSumSolver::solve(&spec)?;
-        //     print_result(&result);
-        // }
+        {
+            let result = AhpSolver::solve("data/headphones_ahp.json")?;
+            print_result(&result);
+        }
+        // 1.1 - Сранвение с прерыдущим вариантом
+        {
+            let spec = core::parser::read_spec("data/example.json")?;
+            let result = WeightedSumSolver::solve(&spec)?;
+            print_result(&result);
+        }
 
         // // 2. Кластеризация
         // {
@@ -44,42 +51,42 @@ fn main() -> Result<()> {
         //     println!("Кластеризация завершена: смотри data/answer_for_clustering.txt и dendrogram.png");
         // }
 
-        // // 3. Принятие с учетом риска по критериям 
+        // // 3. Принятие с учетом риска по критериям
         // let spec = core::parser::read_spec("data/decision_matrix.json")?;
         // let result = DecisionRulesSolver::solve(&spec, "wald", None)?;
         // print_result(&result);
-
+        //
         // let result = DecisionRulesSolver::solve(&spec, "maximax", None)?;
         // print_result(&result);
-
+        //
         // let result = DecisionRulesSolver::solve(&spec, "hurwicz", Some(0.25))?;
         // print_result(&result);
-
+        //
         // let result = DecisionRulesSolver::solve(&spec, "savidge", None)?;
         // print_result(&result);
-
+        //
         // let result = DecisionRulesSolver::solve(&spec, "laplace", None)?;
         // print_result(&result);
 
 
         // // 4. Байес, Ферстнер, Ходж
         // let spec = core::parser::read_spec("data/probabilistic_matrix.json")?;
-
+        //
         // let bayes = ProbabilisticRulesSolver::solve(&spec, "bayes", None)?;
         // print_result(&bayes);
-
+        //
         // let ferstner = ProbabilisticRulesSolver::solve(&spec, "ferstner", Some(-0.5))?;
         // print_result(&ferstner);
-
+        //
         // let hodge = ProbabilisticRulesSolver::solve(&spec, "hodge-lehman", Some(0.7))?;
         // print_result(&hodge);
 
-        let spec = core::parser::read_spec("data/hermeyer_matrix.json")?;
-        let hermeyer = ProbabilisticRulesSolver::solve(&spec, "hermeyer", None)?;
-        print_result(&hermeyer);
+        // // 5. Гермейер
+        // let spec = core::parser::read_spec("data/hermeyer_matrix.json")?;
+        // let hermeyer = ProbabilisticRulesSolver::solve(&spec, "hermeyer", None)?;
+        // print_result(&hermeyer);
 
 
-        // можно добавлять другие блоки по мере надобности
         return Ok(());
     }
 

@@ -62,7 +62,7 @@ impl ClusteringSolver {
         let mut linkage: Vec<(usize, usize, f64, usize)> = Vec::new();
 
         while clusters_members.len() > 1 {
-            // find pair with minimal single-link distance
+            // yпары с минимальным расстоянием
             let mut best_i = 0usize;
             let mut best_j = 1usize;
             let mut best_d = f64::MAX;
@@ -94,6 +94,8 @@ impl ClusteringSolver {
             let mut new_members = clusters_members[best_i].clone();
             new_members.extend(clusters_members[best_j].iter().cloned());
             let new_id = next_cluster_id;
+            println!("ID нового кластера: {}", new_id);
+            println!("Содержит: {} и {}", id_i, id_j);
             let new_size = new_members.len();
 
             // добавляем строку в матрицу связей

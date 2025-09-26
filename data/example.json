@@ -1,8 +1,8 @@
 {
   "criteria": [
-    { "id": "price", "weight": 0.3, "maximize": false },
+    { "id": "price", "weight": 0.4, "maximize": false },
     { "id": "cable", "weight": 0.1, "maximize": true },
-    { "id": "sensitivity", "weight": 0.3, "maximize": true },
+    { "id": "sensitivity", "weight": 0.2, "maximize": true },
     { "id": "weight", "weight": 0.1, "maximize": false },
     { "id": "freq", "weight": 0.2, "maximize": true }
   ],
