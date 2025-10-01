@@ -13,6 +13,8 @@ use problems::{
     clustering::ClusteringSolver,
     decision_rules::DecisionRulesSolver,
     bayes_rules::ProbabilisticRulesSolver,
+    matrix_game::MatrixGameSolver,
+
 };
 
 use crate::problems::ahp::AhpSolver;
@@ -32,17 +34,17 @@ fn main() -> Result<()> {
 
     if cli.method.is_none() {
         
-        // 1. Многокритериальный анализ
-        {
-            let result = AhpSolver::solve("data/headphones_ahp.json")?;
-            print_result(&result);
-        }
-        // 1.1 - Сранвение с прерыдущим вариантом
-        {
-            let spec = core::parser::read_spec("data/example.json")?;
-            let result = WeightedSumSolver::solve(&spec)?;
-            print_result(&result);
-        }
+        // // 1. Многокритериальный анализ
+        // {
+        //     let result = AhpSolver::solve("data/headphones_ahp.json")?;
+        //     print_result(&result);
+        // }
+        // // 1.1 - Сранвение с прерыдущим вариантом
+        // {
+        //     let spec = core::parser::read_spec("data/example.json")?;
+        //     let result = WeightedSumSolver::solve(&spec)?;
+        //     print_result(&result);
+        // }
 
         // // 2. Кластеризация
         // {
@@ -86,6 +88,14 @@ fn main() -> Result<()> {
         // let hermeyer = ProbabilisticRulesSolver::solve(&spec, "hermeyer", None)?;
         // print_result(&hermeyer);
 
+        // 6. Модели конфликтных ситуаций:
+        {
+            let spec = core::parser::read_spec("data/data_for_conflictgame3.json")?;
+            let result = MatrixGameSolver::solve(&spec)?;
+            print_result(&result);
+        }
+
+
 
         return Ok(());
     }
@@ -110,6 +120,13 @@ fn main() -> Result<()> {
             ClusteringSolver::solve(None)?;
             println!("Кластеризация завершена: см.: data/answer_for_clustering.txt и dendrogram.png");
         }
+        Some("matrix") => {
+            let input_path = cli.input.ok_or_else(|| anyhow::anyhow!("Input path required"))?;
+            let spec = core::parser::read_spec(&input_path)?;
+            let result = MatrixGameSolver::solve(&spec)?;
+            print_result(&result);
+        }
+
         Some(other) => anyhow::bail!("Неизвестный метод: {}", other),
         None => unreachable!(),
     }

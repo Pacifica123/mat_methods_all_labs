@@ -6,3 +6,4 @@ pub mod clustering;
 pub mod decision_rules;
 pub mod bayes_rules;
 pub mod ahp;
+pub mod matrix_game;

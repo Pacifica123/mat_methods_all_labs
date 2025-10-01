@@ -1,0 +1,12 @@
+{
+  "criteria": [
+    {"id": "C1"},
+    {"id": "C2"},
+    {"id": "C3"}
+  ],
+  "alternatives": [
+    {"id": "A1", "values": [-2, 0, 1]},
+    {"id": "A2", "values": [3, 4, 5]},
+    {"id": "A3", "values": [2, 7, -2]}
+  ]
+}
