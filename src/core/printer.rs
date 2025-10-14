@@ -16,4 +16,5 @@ pub fn print_result(res: &DecisionResult) {
     for id in &res.chosen {
         println!(" {}", id);
     }
+    println!();
 }

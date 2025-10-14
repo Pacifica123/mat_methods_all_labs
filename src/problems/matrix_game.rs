@@ -16,7 +16,7 @@ impl MatrixGameSolver {
         let m = spec.alternatives.len(); // строки (игрок A)
         let n = spec.criteria.len();      // столбцы (игрок B)
 
-        // Построим саму матрицу (m x n)
+        // матрица стратегий (m x n)
         let mut matrix: Vec<Vec<f64>> = Vec::new();
         for alt in &spec.alternatives {
             if alt.values.len() != n {
@@ -43,7 +43,7 @@ impl MatrixGameSolver {
         let mut scores = Vec::new();
         let mut chosen = Vec::new();
 
-        if (maximin - minimax).abs() < 1e-9 {
+        if maximin == minimax {
             // Седловая точка есть
             let v = maximin;
             for i in 0..m {
@@ -57,6 +57,8 @@ impl MatrixGameSolver {
         } else {
             scores.push(("maximin".to_string(), maximin));
             scores.push(("minimax".to_string(), minimax));
+
+            // .... 
         }
 
         Ok(DecisionResult {

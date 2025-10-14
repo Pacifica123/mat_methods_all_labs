@@ -22,6 +22,7 @@ impl ProbabilisticRulesSolver {
 
         match criterion {
             "hermeyer" => {
+                // максимизация гарантированного математического ожидания при вероятностях
                 for alt in &spec.alternatives {
                     // score = sum(p_j * value_j)
                     let score: f64 = alt.values.iter().zip(probs.iter()).map(|(v,p)| v*p).sum();
@@ -36,6 +37,7 @@ impl ProbabilisticRulesSolver {
                 }
             },
             "ferstner" => {
+                // «ожидаемая полезность» + «страх худшего»
                 let lam = lambda.unwrap_or(-0.5);
                 for alt in &spec.alternatives {
                     let mean: f64 = alt.values.iter().zip(probs.iter()).map(|(v,p)| v*p).sum();

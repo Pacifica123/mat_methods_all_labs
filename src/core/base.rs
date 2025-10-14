@@ -36,3 +36,17 @@ pub struct DecisionResult {
     pub scores: Vec<(String, f64)>,
     pub method: String,
 }
+
+#[derive(Debug, Clone)]
+pub struct FuzzyTerm {
+    pub name: String,            // "низкий", "средний", "высокий"
+    pub membership: Vec<f64>,    // mu_lj(ui) для всех ui
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct FuzzyProblem {
+    pub universal_set: Vec<f64>,        // U = [160,165,…]
+    pub terms: Vec<String>,              // L = ["низкий", "средний", "высокий"]
+    pub expert_opinions: Vec<Vec<Vec<u8>>>, 
+    // expert_opinions[k][j][i] = b_kji
+}
